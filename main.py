@@ -13,12 +13,12 @@ load_dotenv()
 
 from agent.agentic_workflow import GraphBuilder  # This must NOT expect model_provider='groq' unless handled
 
-app = FastAPI(title="AI Trip Planner", description="An intelligent travel planning application powered by AI")
+app = FastAPI(title="Trip Planner", description="An intelligent travel planning application by Katwal Travel Agency")
 
 # Enable CORS for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to frontend URL in production
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
