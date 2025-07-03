@@ -11,7 +11,7 @@ load_dotenv()
 
 from agent.agentic_workflow import GraphBuilder  # This must NOT expect model_provider='groq' unless handled
 
-app = FastAPI()
+app = FastAPI(title="AI Trip Planner", description="An intelligent travel planning application powered by AI")
 
 # Enable CORS for frontend access
 app.add_middleware(
@@ -24,6 +24,23 @@ app.add_middleware(
 
 class QueryRequest(BaseModel):
     question: str
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Render deployment"""
+    return {"status": "healthy", "message": "AI Trip Planner is running"}
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "AI Trip Planner API",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/health",
+            "query": "/query"
+        }
+    }
 
 @app.post("/query")
 async def query_travel_agent(query: QueryRequest):

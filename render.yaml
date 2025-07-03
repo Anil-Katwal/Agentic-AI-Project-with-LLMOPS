@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ai-trip-planner
+    env: docker
+    plan: starter
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENWEATHERMAP_API_KEY
+        sync: false
+      - key: GPLACES_API_KEY
+        sync: false
+      - key: EXCHANGE_RATE_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+    buildCommand: docker build -t ai-trip-planner .
+    startCommand: docker run -p $PORT:8000 ai-trip-planner 
