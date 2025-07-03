@@ -1,0 +1,24 @@
+[project]
+name = "ai-trip-planner"
+version = "0.1.0"
+description = "AI-powered travel planning application with real-time data integration"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "langchain",
+    "langchain-community",
+    "langchain-experimental",
+    "fastapi",
+    "python-dotenv",
+    "streamlit",
+    "uvicorn",
+    "pydantic",
+    "httpx",
+    "requests",
+    "langchain_google_community",
+    "tavily-python",
+    "langchain_groq",
+    "langchain_openai",
+    "langgraph",
+    "pyyaml",
+]
