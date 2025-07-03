@@ -15,6 +15,3 @@ langchain_openai
 langgraph
 langchain-google-community[places]
 pyyaml
-
-
--e .
