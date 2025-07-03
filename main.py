@@ -42,7 +42,7 @@ async def root():
         <!DOCTYPE html>
         <html>
         <head>
-            <title>AI Trip Planner</title>
+            <title> Trip Planner by Katwal's Travel Agency</title>
             <style>
                 body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
                 .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; }
@@ -54,8 +54,8 @@ async def root():
         </head>
         <body>
             <div class="header">
-                <h1>🌍 AI Trip Planner</h1>
-                <p>Plan your perfect trip with AI assistance</p>
+                <h1>🌍 Trip Planner with details</h1>
+                <p>Plan your perfect trip preparing by Katwal travel agency</p>
             </div>
             <div class="content">
                 <h3>Describe your trip:</h3>
@@ -115,7 +115,7 @@ async def query_travel_agent(query: QueryRequest):
     try:
         print(f"Received question: {query.question}")
 
-        # ✅ Do NOT pass model_provider unless GraphBuilder accepts it
+        # Do NOT pass model_provider unless GraphBuilder accepts it
         graph = GraphBuilder()  # Remove model_provider="groq" if it's not accepted
 
         react_app = graph()  # Build the reactive app
