@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
 from dotenv import load_dotenv
@@ -22,17 +24,83 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 class QueryRequest(BaseModel):
     question: str
+
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    """Serve the main HTML page"""
+    try:
+        # Try to serve the static HTML file
+        return FileResponse("static/index.html")
+    except FileNotFoundError:
+        # Fallback: return a simple HTML page
+        return HTMLResponse("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>AI Trip Planner</title>
+            <style>
+                body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; }
+                .content { margin-top: 30px; }
+                textarea { width: 100%; height: 120px; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; margin: 10px 0; }
+                button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; }
+                .result { margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; display: none; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>🌍 AI Trip Planner</h1>
+                <p>Plan your perfect trip with AI assistance</p>
+            </div>
+            <div class="content">
+                <h3>Describe your trip:</h3>
+                <textarea id="query" placeholder="Example: Plan a trip to Paris for 5 days with a budget of $2000"></textarea>
+                <br>
+                <button onclick="planTrip()">🚀 Plan My Trip</button>
+                <div id="result" class="result"></div>
+            </div>
+            <script>
+                async function planTrip() {
+                    const query = document.getElementById('query').value.trim();
+                    if (!query) {
+                        alert('Please enter a trip description');
+                        return;
+                    }
+                    
+                    const result = document.getElementById('result');
+                    result.style.display = 'block';
+                    result.innerHTML = 'AI is planning your trip...';
+                    
+                    try {
+                        const response = await fetch('/query', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({question: query})
+                        });
+                        const data = await response.json();
+                        result.innerHTML = data.answer.replace(/\\n/g, '<br>');
+                    } catch (error) {
+                        result.innerHTML = 'Error: ' + error.message;
+                    }
+                }
+            </script>
+        </body>
+        </html>
+        """)
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint for Render deployment"""
     return {"status": "healthy", "message": "AI Trip Planner is running"}
 
-@app.get("/")
-async def root():
-    """Root endpoint"""
+@app.get("/api")
+async def api_info():
+    """API information endpoint"""
     return {
         "message": "AI Trip Planner API",
         "version": "1.0.0",

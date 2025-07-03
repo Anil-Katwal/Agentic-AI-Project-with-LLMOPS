@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trip Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .result-content {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .error {
+            background: #fee;
+            border-left-color: #e74c3c;
+            color: #c0392b;
+        }
+
+        .example-queries {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .example-queries h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .example-query {
+            background: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .example-query:hover {
+            background: #f0f2f5;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 AI Trip Planner</h1>
+            <p>Plan your perfect trip with AI assistance</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="query">Describe your trip:</label>
+                    <textarea 
+                        id="query" 
+                        placeholder="Example: Plan a trip to Paris for 5 days with a budget of $2000. Include attractions, restaurants, and transportation options."
+                    ></textarea>
+                </div>
+                <button class="button" onclick="planTrip()">🚀 Plan My Trip</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>AI is planning your perfect trip...</p>
+            </div>
+
+            <div class="result" id="result">
+                <h3>Your AI-Generated Trip Plan</h3>
+                <div class="result-content" id="result-content"></div>
+            </div>
+
+            <div class="example-queries">
+                <h4>💡 Try these example queries:</h4>
+                <div class="example-query" onclick="setQuery('Plan a trip to Tokyo for 7 days with a budget of $3000')">
+                    Plan a trip to Tokyo for 7 days with a budget of $3000
+                </div>
+                <div class="example-query" onclick="setQuery('Plan a romantic weekend getaway to Venice, Italy')">
+                    Plan a romantic weekend getaway to Venice, Italy
+                </div>
+                <div class="example-query" onclick="setQuery('Plan a budget-friendly trip to Thailand for 10 days')">
+                    Plan a budget-friendly trip to Thailand for 10 days
+                </div>
+                <div class="example-query" onclick="setQuery('Plan a family vacation to Disney World with kids aged 5 and 8')">
+                    Plan a family vacation to Disney World with kids aged 5 and 8
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Powered by Groq AI • Built with FastAPI</p>
+        </div>
+    </div>
+
+    <script>
+        function setQuery(text) {
+            document.getElementById('query').value = text;
+        }
+
+        async function planTrip() {
+            const query = document.getElementById('query').value.trim();
+            if (!query) {
+                alert('Please enter a trip description');
+                return;
+            }
+
+            const button = document.querySelector('.button');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const resultContent = document.getElementById('result-content');
+
+            // Show loading
+            button.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            try {
+                // Get the current URL to determine the API endpoint
+                const baseUrl = window.location.origin;
+                const response = await fetch(`${baseUrl}/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: query })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultContent.innerHTML = data.answer.replace(/\n/g, '<br>');
+                    result.className = 'result';
+                } else {
+                    resultContent.innerHTML = `Error: ${data.error || 'Something went wrong'}`;
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                resultContent.innerHTML = `Error: ${error.message}`;
+                result.className = 'result error';
+            } finally {
+                // Hide loading and show result
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                button.disabled = false;
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('query').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                planTrip();
+            }
+        });
+    </script>
+</body>
+</html> 
