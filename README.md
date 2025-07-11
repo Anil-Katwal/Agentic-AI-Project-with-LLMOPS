@@ -25,7 +25,7 @@ An intelligent travel planning application powered by AI that provides comprehen
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/Anil-Katwal/Agentic-AI-Project-with-LLMOPs
 cd AI_Trip_Planner
 ```
 
